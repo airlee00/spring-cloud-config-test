@@ -60,7 +60,8 @@ common.eai.server:
     ip: 000.000.000.000
     common.eai.server.port: 0000
 
-hone.datasource:
+spring.data:
+  datasource:
       - key: dataSource
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
@@ -92,6 +93,7 @@ hone.datasource:
         pool:
           maxActive: 1
           maxIdle: 0
+
 
 email: test@mkyong.com
 thread-pool: 10
