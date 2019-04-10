@@ -51,17 +51,15 @@ hone:
       open.allowed.extension: ppt,pptx,png,jpg,jpeg,gif,bmp,png,pdf,doc,docx,xls,xlsx,mht
     online.executor.corePoolSize: 45
     batch.server.default: 127.0.0.1:9875
-#batchProp
-batch:
-    data.home: C:\\htest\\bomnal\\data
+    #로컬에 파일 저장하는 경로 
+    files:
+      path: /Users/isubin/Documents/File
+      maxFileSize: 10000000
+      open.allowed.extension: ppt,pptx,png,jpg,jpeg,gif,bmp,png,pdf,doc,docx,xls,xlsx,mht
+    online.executor.corePoolSize: 45
+    batch.server.default: 127.0.0.1:9875
 
-#bizProp
-common.eai.server:
-    ip: 000.000.000.000
-    common.eai.server.port: 0000
-
-spring.data:
-  datasource:
+    datasources:
       - key: dataSource
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
@@ -93,6 +91,16 @@ spring.data:
         pool:
           maxActive: 1
           maxIdle: 0
+    
+#batchProp
+batch:
+    data.home: C:\\htest\\bomnal\\data
+
+#bizProp
+common.eai.server:
+    ip: 000.000.000.000
+    common.eai.server.port: 0000
+
 
 
 email: test@mkyong.com
