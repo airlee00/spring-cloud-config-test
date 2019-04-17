@@ -48,7 +48,7 @@ hone:
     files:
       path: /Users/isubin/Documents/File
       maxFileSize: 10000000
-      open.allowed.extension: ppt,pptx,png,jpg,jpeg,gif,bmp,png,pdf,doc,docx,xls,xlsx,mht
+      open-allowed-extension: ppt,pptx,png,jpg,jpeg,gif,bmp,png,pdf,doc,docx,xls,xlsx,mht
     online.executor.corePoolSize: 45
     batch.server.default: 127.0.0.1:9875
 
