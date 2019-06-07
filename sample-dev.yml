@@ -1,59 +1,95 @@
-#------편집 불가 S-----
+#------spring boot S-----
 #server.error.whitelabel.enabled: false
 #security 관련 
 #security.basic.enabled: false
-spring.session.store-type: none
-
-#------편집 불가 E------
-#======공통 항목 S========
+spring:
+  session:
+        store-type: none
+        timeout: 3600
+  mvc:
+        view:
+            prefix: /WEB-INF/jsp/
+            suffix: .jsp
+#  jta:
+#    enabled: true
+#    transaction-manager-id: transactionManager          
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#      #show-sql: true
+#    properties:
+#      hibernate:
+#        default_schema: hone4
+#    database-platform: org.hibernate.dialect.Oracle10gDialect
+#  datasource:
+#    url: jdbc:oracle:thin:@127.0.0.1:59161:xe
+#    username : hone4
+#    password: hone4
+#    driver-class-name: oracle.jdbc.driver.OracleDriver            
 #logging.config: classpath:config/logback.xml
-server.port: 8880
-server.servlet.context-path: /online
-#spring.mvc.view:
-#    prefix: /WEB-INF/jsp/
-#    suffix: .jsp
-#    
-spring.session:
-    timeout: 3600 
+server:
+    port: 8880
+    servlet:
+        context-path: /online
 
-#honeProp
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+
+
+#    
+#------spring boot E------
+
+#---------honeProp--------
 hone:
-    transaction:
-      #'datasource' -> default, 'chained', 'jta'
-      transaction-manager-type: datasource
-      transaction-timeout: 10000
-    #web.xml 사용모드 default : false
-    config.use-webxml.enabled: false
     security:
-      session.maximumSessions: 1
-      ignore.path: /service/**,/index.html,/css/**,/html/**,/image/**,/script/**,/index.jsp,/hello
+        session.maximumSessions: 1
+        ignore.path: /jpatest/**,/actuator/**,/service/**,/index.html,/css/**,/html/**,/image/**,/script/**,/index.jsp,/hello
     web:
-      base-backage: bomnal.**.web
-      transactionControl: true
-      transactionControl.forced: false
-    systemheader.classname: hone.bom.web.simple.message.DefaultMessageHeader
+        base-backage: bomnal.**.web
+        transactionControl: true
+        transactionControl.forced: false
+        #web.xml 사용모드 default : false
+        use-webxml.enabled: false
+    systemheader:
+        classname: hone.bom.web.simple.message.DefaultMessageHeader
     monitor.control.services:
-      exceptionClass: hone.bom.BomException
-      idBaseExceptionClass: hone.bom.CodedBomException
-    log.data:
-      gathering: true
-      encrypt: false
-      mode: BOTH
-    online.instance.baseUrl: 
-    common.config.systemConfigType: default
-    dao.hqml:
-      reloadable: true
-      columnNameConvertor.classname: hone.bom.dao.column.ColumnNameCamelizer
+        exceptionClass: hone.bom.BomException
+        idBaseExceptionClass: hone.bom.CodedBomException
+    log:
+        data:
+            gathering: true
+            encrypt: false
+        mode: BOTH
+    online:
+        instance.baseUrl: 
+        executor:
+            corePoolSize: 45
+    config:
+        systemConfigType: default
+    dao:
+        hqml:
+            reloadable: true
+            columnNameConvertor.classname: hone.bom.dao.column.ColumnNameCamelizer
     #로컬에 파일 저장하는 경로 
     files:
       path: /Users/isubin/Documents/File
       maxFileSize: 10000000
       open-allowed-extension: ppt,pptx,png,jpg,jpeg,gif,bmp,png,pdf,doc,docx,xls,xlsx,mht
-    online.executor.corePoolSize: 45
-    batch.server.default: 127.0.0.1:9875
-
+    batch:
+        server:
+            default: 127.0.0.1:9875
+    transaction:
+        #type : 'datasource', 'chained', 'jta'   default => 'datasource'
+        transaction-manager-type: datasource
+        transaction-timeout: 10000
     datasources:
       - key: dataSource
+        #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
+        dataSourceType: tomcat
+        jpaEnabled: true
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
         jndi: jdbc/bizDataSource01
@@ -69,6 +105,21 @@ hone:
           maxActive: 3
           maxIdle: 0
           testOnBorrow: true
+#      - key: jpaDataSource
+#        dataSourceType: jpa
+#        #driverClassName: oracle.jdbc.driver.OracleDriver
+#        driverClassName: oracle.jdbc.xa.client.OracleXADataSource
+#        jndi: jdbc/bizDataSource02
+#        url: jdbc:oracle:thin:@127.0.0.1:59161:xe
+#        username: hone4
+#        password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
+#        beanName: jpaDataSource
+#        transactionManagerName: jpaTransactionManager
+#        mybatisEnabled: false
+#        pool:
+#          maxActive: 3
+#          maxIdle: 0
+#          testOnBorrow: true
       - key: honeDataSource
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
@@ -78,22 +129,26 @@ hone:
         password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
         beanName: honeDataSource
         mybatisEnabled: false
-        mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
-        sqlSessionTemplateName: sqlSession
         transactionManagerName: honeTransactionManager
         pool:
-          maxActive: 1
+          maxActive: 3
           maxIdle: 0
+
+
     
 #batchProp
 batch:
     data.home: C:\\htest\\bomnal\\data
 
-#bizProp
-common.eai.server:
-    ip: 000.000.000.000
-    common.eai.server.port: 0000
-
+#시스템 연계 
+integration:
+    eai:
+        server:
+            ip: 000.000.000.000
+            port: 0000
+#비스니스 
+biz:
+    test: kkkk
 
 
 #======공통 항목 E=========
