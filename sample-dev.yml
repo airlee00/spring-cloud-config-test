@@ -98,34 +98,19 @@ hone:
         password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
         beanName: bizDataSource,sessionRepositoryDataSource,messageDataSource
         mybatisEnabled: true
-        mapperLocations: classpath*:bomnal/online/**/mappers/*.xml
+        mapperLocations: classpath*:hlicp/exm/**/mappers/*.xml
         mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
         transactionManagerName: bizTransactionManager,sessionRepositoryTransactionManager
         pool:
           maxActive: 3
           maxIdle: 0
           testOnBorrow: true
-#      - key: jpaDataSource
-#        dataSourceType: jpa
-#        #driverClassName: oracle.jdbc.driver.OracleDriver
-#        driverClassName: oracle.jdbc.xa.client.OracleXADataSource
-#        jndi: jdbc/bizDataSource02
-#        url: jdbc:oracle:thin:@127.0.0.1:59161:xe
-#        username: hone4
-#        password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
-#        beanName: jpaDataSource
-#        transactionManagerName: jpaTransactionManager
-#        mybatisEnabled: false
-#        pool:
-#          maxActive: 3
-#          maxIdle: 0
-#          testOnBorrow: true
       - key: honeDataSource
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
         jndi: jdbc/honeDataSource01
         url: jdbc:oracle:thin:@127.0.0.1:59161:xe
-        username: honexa
+        username: hone4
         password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
         beanName: honeDataSource
         mybatisEnabled: false
@@ -133,7 +118,6 @@ hone:
         pool:
           maxActive: 3
           maxIdle: 0
-
 
     
 #batchProp
