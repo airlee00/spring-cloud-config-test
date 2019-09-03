@@ -1,15 +1,15 @@
-#------spring boot S-----
+#------spring boot 에서 지정한 properties -----
 #server.error.whitelabel.enabled: false
 #security 관련 
 #security.basic.enabled: false
-spring:
-  session:
-        store-type: none
-        timeout: 3600
-  mvc:
-        view:
-            prefix: /WEB-INF/jsp/
-            suffix: .jsp
+#spring:
+#  session:
+#        store-type: none
+#        timeout: 3600
+#  mvc:
+#        view:
+#            prefix: /WEB-INF/jsp/
+#            suffix: .jsp
 #  jta:
 #    enabled: true
 #    transaction-manager-id: transactionManager          
@@ -27,10 +27,16 @@ spring:
 #    password: hone4
 #    driver-class-name: oracle.jdbc.driver.OracleDriver            
 #logging.config: classpath:config/logback.xml
+#spring.jpa.show-sql: true
+#spring.jpa.properties.hibernate.format_sql: true
+#logging.level.org.hibernate:
+#    SQL: DEBUG
+#    type.descriptor.sql.BasicBinder: TRACE
+
 server:
     port: 8880
     servlet:
-        context-path: /online
+        context-path: /
 
 management:
     endpoints:
@@ -38,21 +44,26 @@ management:
             exposure:
                 include: "*"
 
-
-#    
-#------spring boot E------
-
+#------spring boot 에서 지정한 properties -----
+logback.dbappender.username: hone4
+logback.dbappender.password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)       
+logback.dbappender.url: jdbc:oracle:thin:@127.0.0.1:59161:xe
+logback.dbappender.max-active: 1
 #---------honeProp--------
 hone:
     security:
         session.maximumSessions: 1
-        ignore.path: /jpatest/**,/actuator/**,/service/**,/index.html,/css/**,/html/**,/image/**,/script/**,/index.jsp,/hello
+        ignore.path: /service/**,/inbound/**,/hlicp/**,/index.html,/css/**,/html/**,/image/**,/script/**,/index.jsp,/hello,/**/favicon.*
+        test:
+            password: 1111
+            role: FP
+    app:
+        base-package: hlicp
     web:
-        base-backage: bomnal.**.web
-        transactionControl: true
-        transactionControl.forced: false
+        base-package: hlicp.**.web
         #web.xml 사용모드 default : false
         use-webxml.enabled: false
+            
     systemheader:
         classname: hone.bom.web.simple.message.DefaultMessageHeader
     monitor.control.services:
@@ -69,10 +80,10 @@ hone:
             corePoolSize: 45
     config:
         systemConfigType: default
-    dao:
-        hqml:
-            reloadable: true
-            columnNameConvertor.classname: hone.bom.dao.column.ColumnNameCamelizer
+#    dao:
+#        hqml:
+#            reloadable: true
+#            columnNameConvertor.classname: hone.bom.dao.column.ColumnNameCamelizer
     #로컬에 파일 저장하는 경로 
     files:
       path: /Users/isubin/Documents/File
@@ -81,25 +92,40 @@ hone:
     batch:
         server:
             default: 127.0.0.1:9875
+        data.home: C:\\htest\\bomnal\\data
+    jpa:
+        base-packages: hlicp.**.jpa
     transaction:
+        transaction-control: true
+        transaction-control-forced: true
         #type : 'datasource', 'chained', 'jta'   default => 'datasource'
         transaction-manager-type: datasource
-        transaction-timeout: 10000
+        transaction-timeout: 120
     datasources:
       - key: dataSource
         #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
         dataSourceType: tomcat
-        jpaEnabled: true
+        #driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
         jndi: jdbc/bizDataSource01
+        #url: jdbc:log4jdbc:oracle:thin:@127.0.0.1:59161:xe
         url: jdbc:oracle:thin:@127.0.0.1:59161:xe
         username: hone4
-        password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
+        password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)
         beanName: bizDataSource,sessionRepositoryDataSource,messageDataSource
-        mybatisEnabled: true
-        mapperLocations: classpath*:hlicp/exm/**/mappers/*.xml
-        mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
+        jpa:
+          enabled: true
+          hibernate:
+            hbm2ddl.auto: update
+            show_sql: true
+           # implicit_naming_strategy: aaa
+           # physical_naming_strategy: aa
+           # id.new_generator_mappings: aa
+        mybatis:  
+          enabled: true
+          mapperLocations: classpath*:hlicp/exm/**/mappers/*.xml
+          mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml        
         transactionManagerName: bizTransactionManager,sessionRepositoryTransactionManager
         pool:
           maxActive: 3
@@ -111,29 +137,41 @@ hone:
         jndi: jdbc/honeDataSource01
         url: jdbc:oracle:thin:@127.0.0.1:59161:xe
         username: hone4
-        password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
+        password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)
         beanName: honeDataSource
-        mybatisEnabled: false
         transactionManagerName: honeTransactionManager
         pool:
           maxActive: 3
           maxIdle: 0
-
-    
-#batchProp
-batch:
-    data.home: C:\\htest\\bomnal\\data
-
-#시스템 연계 
-integration:
-    eai:
-        server:
-            ip: 000.000.000.000
-            port: 0000
-#비스니스 
-biz:
-    test: kkkk
-
+      #시스템 연계 및 spring-integration 설정 
+    integration:
+        inbound-gateway.additional-path: /hlicp/{appCode}/{serviceId}    
+        eai:
+            server:
+                ip: 000.000.000.000
+                port: 0000
+        api:
+            encoding: UTF-8
+            connection-timeout: 10000
+            read-timeout: 10000
+            url: 
+                mci: http://localhost:8881/online
+    cache:
+        hazelcast:
+            config: classpath:honeconfig/hazelcast/hazelcast.xml
+            properties:
+                key1: value1
+                key2: value2  
+                time-to-live-seconds: 1111  
+            members:
+                - 10.253.201.203:5701
+                - 10.253.201.203:5801
+                - 10.253.201.203:5901
+#비즈니스 
+hlicp:
+    jpl:
+        test: kkkk
+        test2: ssss
 
 #======공통 항목 E=========
 
