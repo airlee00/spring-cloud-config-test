@@ -95,6 +95,10 @@ hone:
         data.home: C:\\htest\\bomnal\\data
     jpa:
         base-packages: hlicp.**.jpa
+        hibernate:
+            dialect: org.hibernate.dialect.Oracle12cDialect        
+            hbm2ddl.auto: none       
+            show_sql: false 
     transaction:
         transaction-control: true
         transaction-control-forced: true
@@ -105,6 +109,7 @@ hone:
       - key: dataSource
         #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
         dataSourceType: tomcat
+        jpaEnabled: true
         #driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
@@ -114,18 +119,9 @@ hone:
         username: hone4
         password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)
         beanName: bizDataSource,sessionRepositoryDataSource,messageDataSource
-        jpa:
-          enabled: true
-          hibernate:
-            hbm2ddl.auto: update
-            show_sql: true
-           # implicit_naming_strategy: aaa
-           # physical_naming_strategy: aa
-           # id.new_generator_mappings: aa
-        mybatis:  
-          enabled: true
-          mapperLocations: classpath*:hlicp/exm/**/mappers/*.xml
-          mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml        
+        mybatisEnabled: true
+        mapperLocations: classpath*:hlicp/exm/**/mappers/*.xml
+        mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
         transactionManagerName: bizTransactionManager,sessionRepositoryTransactionManager
         pool:
           maxActive: 3
@@ -139,6 +135,7 @@ hone:
         username: hone4
         password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)
         beanName: honeDataSource
+        mybatisEnabled: false
         transactionManagerName: honeTransactionManager
         pool:
           maxActive: 3
