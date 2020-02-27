@@ -1,3 +1,37 @@
+#------spring boot 에서 지정한 properties -----
+#server.error.whitelabel.enabled: false
+#security 관련 
+#security.basic.enabled: false
+#spring:
+#  session:
+#        store-type: none
+#        timeout: 3600
+#  mvc:
+#        view:
+#            prefix: /WEB-INF/jsp/
+#            suffix: .jsp
+#  jta:
+#    enabled: true
+#    transaction-manager-id: transactionManager          
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#      #show-sql: true
+#    properties:
+#      hibernate:
+#        default_schema: hone4
+#    database-platform: org.hibernate.dialect.Oracle10gDialect
+#  datasource:
+#    url: jdbc:oracle:thin:@127.0.0.1:59161:xe
+#    username : hone4
+#    password: hone4
+#    driver-class-name: oracle.jdbc.driver.OracleDriver            
+#logging.config: classpath:config/logback.xml
+#spring.jpa.show-sql: true
+#spring.jpa.properties.hibernate.format_sql: true
+#logging.level.org.hibernate:
+#    SQL: DEBUG
+#    type.descriptor.sql.BasicBinder: TRACE
 spring:
   kafka:
     consumer:
@@ -107,7 +141,7 @@ hone:
             hlicp.aco: exmDS01  
             hone.ext: exmDS  
     datasources:
-      - key: honeDataSource222
+      - key: exmDS
         #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
         dataSourceType: tomcat
         jpa:
@@ -138,15 +172,14 @@ hone:
           maxActive: 3
           maxIdle: 0
           testOnBorrow: true
-      - key: honeDataSource333
+      - key: exmDS01
         #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
         dataSourceType: tomcat
         jpa:
             enabled: true
             entityManagerFactoryRef: entityManagerFactory2
             basePackages: hlicp
-            #'-'가 '.'으로 치환됨 
-            properties: 
+            properties:
                 hibernate-dialect: org.hibernate.dialect.Oracle12cDialect        
                 hibernate-hbm2ddl-auto: create       
                 hibernate-show_sql: false 
@@ -169,7 +202,7 @@ hone:
           maxActive: 3
           maxIdle: 0
           testOnBorrow: true
-      - key: honeDataSource444
+      - key: honeDataSource
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
         jndi: honeDS01
@@ -225,3 +258,14 @@ hlicp:
     jpl:
         test: kkkk
         test2: ssss
+
+#======공통 항목 E=========
+
+---
+spring.profiles: dev
+
+---
+spring.profiles: stg
+
+---
+spring.profiles: prd
