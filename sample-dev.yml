@@ -1,43 +1,31 @@
-#------spring boot 에서 지정한 properties -----
-#server.error.whitelabel.enabled: false
-#security 관련 
-#security.basic.enabled: false
-#spring:
-#  session:
-#        store-type: none
-#        timeout: 3600
-#  mvc:
-#        view:
-#            prefix: /WEB-INF/jsp/
-#            suffix: .jsp
-#  jta:
-#    enabled: true
-#    transaction-manager-id: transactionManager          
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#      #show-sql: true
-#    properties:
-#      hibernate:
-#        default_schema: hone4
-#    database-platform: org.hibernate.dialect.Oracle10gDialect
-#  datasource:
-#    url: jdbc:oracle:thin:@127.0.0.1:59161:xe
-#    username : hone4
-#    password: hone4
-#    driver-class-name: oracle.jdbc.driver.OracleDriver            
-#logging.config: classpath:config/logback.xml
-#spring.jpa.show-sql: true
-#spring.jpa.properties.hibernate.format_sql: true
-#logging.level.org.hibernate:
-#    SQL: DEBUG
-#    type.descriptor.sql.BasicBinder: TRACE
-
+spring:
+  kafka:
+    consumer:
+      group-id: siTestGroup
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      batch-size: 16384
+      buffer-memory: 33554432
+      retries: 0
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  servlet:
+    multipart:
+      max-file-size: 100000000000
+      max-request-size: 100000000000
+      
 server:
     port: 8880
     servlet:
         context-path: /
-
+#    error:
+#      whitelabel:
+#        enabled: false
+#      include-stacktrace: always
+    
 management:
     endpoints:
         web:
@@ -51,12 +39,20 @@ logback.dbappender.url: jdbc:oracle:thin:@127.0.0.1:59161:xe
 logback.dbappender.max-active: 1
 #---------honeProp--------
 hone:
+    kafka:
+      topic: si.topic
+      newTopic: si.new.topic
+      messageKey: si.key
     security:
         session.maximumSessions: 1
-        ignore.path: /service/**,/inbound/**,/hlicp/**,/index.html,/css/**,/html/**,/image/**,/script/**,/index.jsp,/hello,/**/favicon.*
+        ignore.path: /jersey/**,/files/**,/hlicp/**,/loglevel/**,/service/**,/inbound/**,/index.html,/css/**,/html/**,/image/**,/script/**,/index.jsp,/hello,/**/favicon.*
         test:
             password: 1111
             role: FP
+
+        oauth2:
+            jwt:
+                signkey: 123@#$            
     app:
         base-package: hlicp
     web:
@@ -65,7 +61,9 @@ hone:
         use-webxml.enabled: false
             
     systemheader:
-        classname: hone.bom.web.simple.message.DefaultMessageHeader
+        classname: hone.ext.online.web.message.HlicpMessageHeader
+        message-classname: hone.ext.online.web.message.HlicpSimpleJsonMessage
+        outbound-message-classname: hone.ext.online.web.message.HlicpSimpleOnlineMessage
     monitor.control.services:
         exceptionClass: hone.bom.BomException
         idBaseExceptionClass: hone.bom.CodedBomException
@@ -84,60 +82,102 @@ hone:
 #        hqml:
 #            reloadable: true
 #            columnNameConvertor.classname: hone.bom.dao.column.ColumnNameCamelizer
-    #로컬에 파일 저장하는 경로 
+    #파일저장경로 => {base-path}/{policy-path}/yyyy/mm/dd/UUID.확장자와 같이 생성 
     files:
-      path: /Users/isubin/Documents/File
+      base-path:  /Users/kichaelee/Documents/Files
+      temp-path:  /Users/kichaelee/Documents/Files/temp
+      policy-path: HLICP/{filesId}
       maxFileSize: 10000000
       open-allowed-extension: ppt,pptx,png,jpg,jpeg,gif,bmp,png,pdf,doc,docx,xls,xlsx,mht
     batch:
         server:
             default: 127.0.0.1:9875
         data.home: C:\\htest\\bomnal\\data
-    jpa:
-        base-packages: hlicp.**.jpa
-        hibernate:
-            dialect: org.hibernate.dialect.Oracle12cDialect        
-            hbm2ddl.auto: none       
-            show_sql: false 
     transaction:
         transaction-control: true
         transaction-control-forced: true
         #type : 'datasource', 'chained', 'jta'   default => 'datasource'
-        transaction-manager-type: datasource
+        transaction-manager-type: jta
         transaction-timeout: 120
+    datasource-map:
+        #policy 'default' : bean 이름이 dataSource를 찾음, 'package': 패키지로 매핑된 ds를 찾음 
+        policy: package
+        packages:
+            hlicp.exm: exmDS  
+            hlicp.aco: exmDS01  
+            hone.ext: exmDS  
     datasources:
-      - key: dataSource
+      - key: honeDataSource222
         #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
         dataSourceType: tomcat
-        jpaEnabled: true
+        jpa:
+            enabled: true
+            entityManagerFactoryRef: entityManagerFactory
+            basePackages: hlicp
+            properties:
+                hibernate.dialect: org.hibernate.dialect.Oracle12cDialect        
+                hibernate.hbm2ddl.auto: create       
+                hibernate.show_sql: false 
+                hibernate.javax.persistence.query.timeout: 3000
+                hibernate.id.new_generator_mappings: false
         #driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-        driverClassName: oracle.jdbc.driver.OracleDriver
-        #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
-        jndi: jdbc/bizDataSource01
+        #driverClassName: oracle.jdbc.driver.OracleDriver
+        driverClassName: oracle.jdbc.xa.client.OracleXADataSource
+        jndi: bizDS01
         #url: jdbc:log4jdbc:oracle:thin:@127.0.0.1:59161:xe
         url: jdbc:oracle:thin:@127.0.0.1:59161:xe
         username: hone4
         password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)
-        beanName: bizDataSource,sessionRepositoryDataSource,messageDataSource
+        beanName: sessionRepositoryDataSource,messageDataSource
         mybatisEnabled: true
-        mapperLocations: classpath*:hlicp/exm/**/mappers/*.xml
+        mapperLocations: classpath*:hlicp/**/mappers/*.xml
         mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
-        transactionManagerName: bizTransactionManager,sessionRepositoryTransactionManager
+        transactionManagerName: sessionRepositoryTransactionManager
         pool:
+          maxPoolSize: 6
           maxActive: 3
           maxIdle: 0
           testOnBorrow: true
-      - key: honeDataSource
+      - key: honeDataSource333
+        #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
+        dataSourceType: tomcat
+        jpa:
+            enabled: true
+            entityManagerFactoryRef: entityManagerFactory2
+            basePackages: hlicp
+            properties:
+                hibernate.dialect: org.hibernate.dialect.Oracle12cDialect        
+                hibernate.hbm2ddl.auto: create       
+                hibernate.show_sql: false 
+                hibernate.javax.persistence.query.timeout: 3000
+                hibernate.id.new_generator_mappings: false
+        #driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+        #driverClassName: oracle.jdbc.driver.OracleDriver
+        driverClassName: oracle.jdbc.xa.client.OracleXADataSource
+        jndi: bizDS01
+        #url: jdbc:log4jdbc:oracle:thin:@127.0.0.1:59161:xe
+        url: jdbc:oracle:thin:@127.0.0.1:59161:xe
+        username: honexa
+        password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)
+        mybatisEnabled: true
+        mapperLocations: classpath*:hlicp/**/mappers/*.xml
+        mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
+        transactionManagerName: codeTransactionManager
+        pool:
+          maxPoolSize: 6
+          maxActive: 3
+          maxIdle: 0
+          testOnBorrow: true
+      - key: honeDataSource444
         driverClassName: oracle.jdbc.driver.OracleDriver
         #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
-        jndi: jdbc/honeDataSource01
+        jndi: honeDS01
         url: jdbc:oracle:thin:@127.0.0.1:59161:xe
         username: hone4
         password: ENC(UG9SUeQHb+rRwkJR/aSiGDQ3NwNIYucTSJozQPglvI4=)
-        beanName: honeDataSource
-        mybatisEnabled: false
         transactionManagerName: honeTransactionManager
         pool:
+          maxPoolSize: 6
           maxActive: 3
           maxIdle: 0
       #시스템 연계 및 spring-integration 설정 
@@ -150,33 +190,37 @@ hone:
         api:
             encoding: UTF-8
             connection-timeout: 10000
-            read-timeout: 10000
+            read-timeout: 20000
             url: 
-                mci: http://localhost:8881/online
+                mci: http://localhost:8881
+                esb: http://localhost:8882
+        ksign:
+            spin-server-address: 10.10.10.157:4151
+            spin-server-sender-name: hlicp
+            sdbcrypto-server-ip: 10.10.10.157
+            sdbcrypto-server-port: 9003
+            sdbcrypto-domain-name: API_KEY
+            sdbcrypto-timeout: 3
+            sdbcrypto-null-enc: false
+            sdbcrypto-table-owner: SECUREPIN
+            sdbcrypto-table-name: KEY_TBL
+            sdbcrypto-column-aes: AES
+            sdbcrypto-column-email: EMAIL
+            sdbcrypto-column-smail: SMAIL
+                    
     cache:
         hazelcast:
+            input-queue-name: default
             config: classpath:honeconfig/hazelcast/hazelcast.xml
             properties:
                 key1: value1
                 key2: value2  
-                time-to-live-seconds: 1111  
+                time-to-live-seconds: 10  
             members:
-                - 10.253.201.203:5701
-                - 10.253.201.203:5801
-                - 10.253.201.203:5901
+                - 10.37.129.2:5701
+                - 10.37.129.2:5702
 #비즈니스 
 hlicp:
     jpl:
         test: kkkk
         test2: ssss
-
-#======공통 항목 E=========
-
----
-spring.profiles: dev
-
----
-spring.profiles: stg
-
----
-spring.profiles: prd
