@@ -212,16 +212,19 @@ hone:
             com-atomikos-icatch-max_actives: 10   
             com-atomikos-icatch-max_timeout: 120000
             #com-atomikos-icatch-default_jta_timeout: 120000
-#    datasources:
-#      - key: exmDS
-#        dataSourceType: jndi
-#        jndi: EXMDS
-#        beanName: sessionDataSource,messageDataSource,honeDataSource,dataSource
-#        # mybatis 사용 여부 
-#        mybatisEnabled: true
-#        mapperLocations: classpath*:hlicp/**/mappers/*.xml
-#        mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
-
+    datasource-map:
+        # 'file', 'map', 'properties'
+        type: file
+        #policy 'default' : bean 이름이 dataSource를 찾음, 'package': 패키지로 매핑된 ds를 찾음 
+        policy: package
+        packages:
+            "[hlicp.exm]": exmDS1
+            "[hlicp.aco]": exmDS  
+            "[hone.ext]": exmDS 
+    datasources:
+      - exmDS
+ #     - comDS
+      - honeDataSource
 ---
 spring.profiles: stg
 
