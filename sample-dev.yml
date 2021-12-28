@@ -218,7 +218,7 @@ hone:
         #policy 'default' : bean 이름이 dataSource를 찾음, 'package': 패키지로 매핑된 ds를 찾음 
         policy: package
         packages:
-            "[hlicp.exm]": exmDS1
+            "[hlicp.exm]": exmDS
             "[hlicp.aco]": exmDS  
             "[hone.ext]": exmDS 
     datasources:
