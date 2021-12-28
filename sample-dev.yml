@@ -208,7 +208,7 @@ spring.profiles: dev
 hone:
     transaction:
         atomikosProperty:
-            com-atomikos-icatch-log_base_dir: /Users/kichaelee/temp/log
+            com-atomikos-icatch-log_base_dir: /Users/kichaelee/temp/log222
             com-atomikos-icatch-max_actives: 10   
             com-atomikos-icatch-max_timeout: 120000
             #com-atomikos-icatch-default_jta_timeout: 120000
