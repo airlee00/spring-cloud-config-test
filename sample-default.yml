@@ -198,7 +198,12 @@ hone:
 
 
 #비즈니스 
-
+#비즈니스 
+central:
+    test: 111
+    test1: aaa222
+    test2: bbb333
+    test3: ccc444
 #======공통 항목 E=========
 
 
