@@ -194,7 +194,7 @@ hone:
                 esb: http://localhost:8881/exm2
         # db 암호화 툴 설정 정보
         ksign:
-            enabled: true
+            enabled: false
             block-pin-type: CBP
 
 
