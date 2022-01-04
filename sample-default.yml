@@ -190,7 +190,7 @@ hone:
             read-timeout: 90000
             #RestApiClient 를 통해 rest 호출, 즉 CLI 컴포넌트 호출시 사용하는 타겟 정보
             url: 
-                mci: http://localhost:8881/exm2
+                mci: http://localhost:8881/exm233
                 esb: http://localhost:8881/exm2
         # db 암호화 툴 설정 정보
         ksign:
@@ -201,7 +201,7 @@ hone:
 #비즈니스 
 #비즈니스 
 central:
-    test: aaa111-2
+    test: aaa111-2333333333
     test1: bbb222-2
     test2: ccc333-2
     test3: ddd444-2
