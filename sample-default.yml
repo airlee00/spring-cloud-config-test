@@ -201,10 +201,10 @@ hone:
 #비즈니스 
 #비즈니스 
 central:
-    test: aaa22-222
-    test1: bbb222-2
-    test2: ccc333-2
-    test3: ddd444-2
+    test: aaa
+    test1: bbb
+    test2: ccc
+    test3: ddd
 #======공통 항목 E=========
 
 
