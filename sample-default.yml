@@ -114,7 +114,7 @@ hone:
     log:
         data:
             gathering: true
-            encrypt: false
+            encrypt: true
         mode: BOTH
     online:
         # 잭슨의 java.sql.data의 날짜 포맷에 사용
