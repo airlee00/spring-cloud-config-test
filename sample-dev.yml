@@ -1,0 +1,191 @@
+#------spring boot S-----
+#server.error.whitelabel.enabled: false
+#security 관련 
+#security.basic.enabled: false
+spring:
+  session:
+        store-type: none
+        timeout: 3600
+  mvc:
+        view:
+            prefix: /WEB-INF/jsp/
+            suffix: .jsp
+#  jta:
+#    enabled: true
+#    transaction-manager-id: transactionManager          
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#      #show-sql: true
+#    properties:
+#      hibernate:
+#        default_schema: hone4
+#    database-platform: org.hibernate.dialect.Oracle10gDialect
+#  datasource:
+#    url: jdbc:oracle:thin:@127.0.0.1:59161:xe
+#    username : hone4
+#    password: hone4
+#    driver-class-name: oracle.jdbc.driver.OracleDriver            
+
+#jasypt
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+
+logging.config: classpath:logback.xml
+server:
+    port: 8888
+    servlet:
+        context-path: /online
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+
+
+#    
+#------spring boot E------
+
+#---------honeProp--------
+hone:
+    rcp.server.port: 8212
+    message-source.type : db
+    security:
+        session.maximumSessions: 1
+        ignore.path: /jpatest/**,/actuator/**,/service/**,/index.html,/css/**,/html/**,/image/**,/script/**,/index.jsp,/inbound/**,/files/**,/sample.html
+    web:
+        base-backage: bomnal.**.web
+        transactionControl: true
+        transactionControl.forced: false
+        #web.xml 사용모드 default : false
+        use-webxml.enabled: false
+    integration:
+        #Spring Integration에서 받을 URI를 설정한다. 해당되는 URI만 Spring Integration에서 Service에서 받는다.
+        #관련파일:hone-web-support-gateway의 HttpInboundGatewayContextConfig.java
+        inbound-gateway.additional-path: /api/{appCode}/{serviceId}
+        api:
+            encoding: UTF-8
+            #timeout: 10000   -> 10000 milliSeconds -> 10 seconds
+            connection-timeout: 5000
+            read-timeout: 9500
+            url:
+                eai: http://localhost:8080/
+    systemheader:
+        classname: bomnal.framework.online.message.BomnalMessageHeader
+        message-classname: bomnal.framework.online.message.BomnalJsonMessage
+        outbound-message-classname: bomnal.framework.online.message.BomnalOnlineMessage
+    monitor.control.services:
+        enabled:
+          enabled: true
+        exceptionClass: hone.bom.BomException
+        idBaseExceptionClass: hone.bom.CodedBomException
+    log:
+        data:
+            gathering: true
+            encrypt: false
+        mode: BOTH
+    online:
+        instance.baseUrl: 172.16.2.137
+        executor:
+            corePoolSize: 45
+    config:
+        systemConfigType: default
+    dao:
+        hqml:
+            reloadable: true
+            columnNameConvertor.classname: hone.bom.dao.column.ColumnNameCamelizer
+    nexacro :
+        column.ui-case-style : snake
+        column.fw-case-style : camel
+    #로컬에 파일 저장하는 경로 
+    files:
+      #path: /Users/mingyeonghun/Documents/files
+      base-path: /Users/mingyeonghun/Documents/files/
+      temp-path: /Users/mingyeonghun/Documents/tempFiles/
+      maxFileSize: 10000000
+      open-allowed-extension: ppt,pptx,png,jpg,jpeg,gif,bmp,png,pdf,doc,docx,xls,xlsx,mht
+    batch:
+        server:
+            default: 127.0.0.1:9875
+    transaction:
+        #type : 'datasource', 'chained', 'jta'   default => 'datasource'
+        transaction-manager-type: datasource
+        transaction-timeout: 10000
+    datasources:
+      - key: dataSource
+        #type : 'jndi', 'tomcat', 'hikari'  default-> 'tomcat'
+        dataSourceType: tomcat
+        jpaEnabled: false
+        driverClassName: oracle.jdbc.driver.OracleDriver
+        #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
+        jndi: jdbc/bizDataSource01
+        url: jdbc:oracle:thin:@172.16.51.166:1521:xe
+        username: hone5
+        password: ENC(hIcQyJPACX2X1k29Dq6PoAvW704XoUg66mDAmg+i7WI=)
+#       password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
+        beanName: bizDataSource,sessionRepositoryDataSource,messageDataSource
+        mybatisEnabled: true
+        mapperLocations: classpath*:bomnal/online/**/mappers/*.xml
+        mapperConfigLocation: classpath:honeconfig/mybatis/configuration.xml
+        transactionManagerName: bizTransactionManager,sessionRepositoryTransactionManager
+        pool:
+          maxActive: 3
+          maxIdle: 0
+          testOnBorrow: true
+#      - key: jpaDataSource
+#        dataSourceType: tomcat
+#        #driverClassName: oracle.jdbc.driver.OracleDriver
+#        driverClassName: oracle.jdbc.xa.client.OracleXADataSource
+#        jndi: jdbc/bizDataSource02
+#        url: jdbc:oracle:thin:@127.0.0.1:59161:xe
+#        username: hone4
+#        password: ENC(KujRg6Lv5zJlW9Vq1xGO4g==)
+#        beanName: jpaDataSource
+#        transactionManagerName: jpaTransactionManager
+#        mybatisEnabled: false
+#        pool:
+#          maxActive: 3
+#          maxIdle: 0
+#          testOnBorrow: true
+      - key: honeDataSource
+        driverClassName: oracle.jdbc.driver.OracleDriver
+        #driverClassName: oracle.jdbc.xa.client.OracleXADataSource
+        jndi: jdbc/honeDataSource01
+        url: jdbc:oracle:thin:@172.16.51.166:1521:xe
+        username: honeop
+        password: honeop
+        beanName: honeDataSource
+        mybatisEnabled: true
+        transactionManagerName: honeTransactionManager
+        pool:
+          maxActive: 3
+          maxIdle: 0
+
+    
+#batchProp
+batch:
+    data.home: C:\\htest\\bomnal\\data
+
+#시스템 연계 
+integration:
+    eai:
+        server:
+            ip: 000.000.000.000
+            port: 0000
+#비스니스 
+biz:
+    test: kkkk
+
+
+#======공통 항목 E=========
+
+---
+spring.profiles: dev
+
+---
+spring.profiles: stg
+
+---
+spring.profiles: prd
